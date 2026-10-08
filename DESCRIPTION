@@ -1,0 +1,21 @@
+Package: meshcore
+Title: One Verb Set for Lattice Meshes: Rasters and Discrete Global Grids
+Version: 0.0.0.9000
+Authors@R: person("Michael", "Sumner", email = "mdsumner@gmail.com", role = c("aut", "cre"))
+Description: Prototype for the mesh core (working name). A raster (GRID) and a
+    discrete global grid (CELL) are both meshes whose vertex, edge and
+    boundary tables are computed from cell ids, so no coincident vertices are
+    ever merged. The same verbs work on both, and arrays join to either model
+    through a keyed dimension (cell id). Vocabulary follows UGRID, xdggs,
+    uxarray and OGC API DGGS; vertex and segment tables follow wkpool.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Imports:
+    jsonlite,
+    sf,
+    wk
+Suggests:
+    testthat (>= 3.0.0),
+    wkpool
+Config/testthat/edition: 3
+RoxygenNote: 7.3.1

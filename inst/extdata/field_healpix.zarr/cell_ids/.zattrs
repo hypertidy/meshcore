@@ -1,0 +1,9 @@
+{
+  "_ARRAY_DIMENSIONS": [
+    "cells"
+  ],
+  "grid_name": "healpix",
+  "level": 6,
+  "indexing_scheme": "nested",
+  "ellipsoid": "sphere"
+}

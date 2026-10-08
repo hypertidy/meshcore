@@ -1,0 +1,3 @@
+^bench$
+^README\.Rmd$
+^inst/scripts/.*\.png$
