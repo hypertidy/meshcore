@@ -2,6 +2,8 @@
 
 One verb set for a raster (GRID) and a discrete global grid (CELL), with
 arrays joined to either through a keyed dimension. Prototype R package.
+Design notes, the mesh spec draft, the model zoo and the roadmap are in
+[docs/](docs/README.md).
 
 ```r
 remotes::install_github("hypertidy/meshcore")   # package name: meshcore
