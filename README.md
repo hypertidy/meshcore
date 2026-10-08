@@ -1,8 +1,18 @@
 # meshcore (working name): first proof
 
 One verb set for a raster (GRID) and a discrete global grid (CELL), with
-arrays joined to either through a keyed dimension. Prototype R package,
-roadmap items 3 and 4.
+arrays joined to either through a keyed dimension. Prototype R package.
+
+```r
+remotes::install_github("hypertidy/meshcore")   # package name: meshcore
+```
+
+meshcore sits between [wkpool](https://github.com/hypertidy/wkpool)
+(vertex pools and topology for any wk geometry; `as_wkpool()` hands one
+over) and model packages that add their own models on the same verbs:
+the `silicate2` branch of [silicate](https://github.com/hypertidy/silicate)
+adds UGRID this way, and its methods make `edges()`, `face_edge()`,
+`neighbours()` and the array join work on flexible meshes too.
 
 ![GRID and HEALPix CELL, same verbs, joined arrays](inst/scripts/demo.png)
 
@@ -28,7 +38,8 @@ join_array(CELL(zarr), read_array(zarr, "field"))  # key = cell_ids on "cells"
 * Every table is computed from cell ids. Only `cells()` and `boundaries()`
   (and the hierarchy) are written per model; `vertices()`, `edges()`,
   `face_edge()` and `neighbours()` are one generic implementation on integer
-  vertex keys.
+  vertex keys. `edges()`, `face_edge()`, `as_wkpool()` and `n_cells()` are
+  S3 generics, so a model with stored edges (UGRID) can return its own.
 * `join_array()` is a join on cell id, no geometry. The GRID key is
   computed (`row * ncol + col`); the CELL key is the `cell_ids` coordinate
   variable. Both joins reproduce the generating field at cell centres
@@ -107,8 +118,10 @@ already-merged pool (`.vx` 1..n, lattice key kept as `.key`).
   code already handles variable corner counts; the per-model key functions
   would not).
 * **Antimeridian and poles**: vertex longitudes are canonical in
-  (-180, 180]; geometry output unwraps per cell around its centre. A real
-  rule belongs in the spec.
+  (-180, 180]; geometry output (`as_wk()`) unwraps per cell around its
+  centre. So `vertices()` of a regional grid that touches 180 can hold
+  both 180 and -180: draw from `as_wk()`, not by joining `boundaries()`
+  to `vertices()`. A real rule belongs in the spec.
 * **GRID hierarchy** here is 2 x 2 blocks with the extent grown to whole
   blocks, which is not GDAL overview semantics (same extent, non-integer
   factor). Pick one.
