@@ -4,7 +4,7 @@ One verb set for a raster (GRID) and a discrete global grid (CELL), with
 arrays joined to either through a keyed dimension. Prototype R package.
 
 ```r
-remotes::install_github("hypertidy/meshcore-")   # package name: meshcore
+remotes::install_github("hypertidy/meshcore")   # package name: meshcore
 ```
 
 meshcore sits between [wkpool](https://github.com/hypertidy/wkpool)
