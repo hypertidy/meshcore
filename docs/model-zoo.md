@@ -80,7 +80,7 @@ models extend it to computed vertices.
 | FACE (coverage) | polygon face with holes | Stored | Sequential cycles | wkpool cycles nearly give it | Later |
 | HALFEDGE | half-edge | Stored | Structural | What the live handles are underneath | Later |
 | SIMPLEX(k) | k-simplex | Stored | Structural | Generalises TRI to tetrahedra | Later |
-| TRACK | path with time | Stored (xyt) | Sequential | The trip lineage | Later |
+| TRACK | path with time | Stored (xyt); identity by (track, time), rung "sequential" | Sequential | trip; design and time-spent sketch for trip2 | Later (roadmap 11) |
 | GRAPH | directed, weighted edge | Stored | Structural | sfnetworks and dodgr territory | Later |
 
 DUAL is a verb, not a model: Voronoi from TRI, an adjacency graph from FACE.
