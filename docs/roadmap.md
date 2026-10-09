@@ -52,11 +52,11 @@ From what the prototypes found (see [findings.md](findings.md)):
 9. Port SC, PATH, ARC and TRI onto wkpool in silicate2 with the `sc_*`
    names unchanged.
 10. FACE (holes), then links between models and layers.
-11. TRACK (trip2, working name): tracks, fixes and derived segments on
-    meshcore conventions; time spent as a TRACK x GRID link table (a
-    base-R sketch matches `trip::rasterize()` on `walrus818` to 4e-13);
-    then trip's internals onto it with its API unchanged. Needs point to
-    cell (5) for CELL and UGRID, a time key on arrays, and a segment rule
+11. TRACK in traipse: tracks, fixes and derived segments on meshcore
+    conventions; time spent as a TRACK x GRID link table (a base-R
+    sketch matches `trip::rasterize()` on `walrus818` to 4e-13); then
+    trip 2.0 as a thin front end on it, off sp. Needs point to cell (5)
+    for CELL and UGRID, a time key on arrays, and a segment rule
     (planar, geodesic, rhumb) next to the antimeridian rule (6).
 
 ## Open decisions
