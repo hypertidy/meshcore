@@ -1,7 +1,9 @@
 # Roadmap
 
-State on 8 October 2026. The tracking issue in this repo links the
-discussions and pull requests behind each item.
+State on 10 October 2026. Order agreed by Michael on 10 October: fix
+silicate master, settle the six spec questions, then cdtr and laridae to
+CRAN. The tracking issue in this repo links the discussions and pull
+requests behind each item.
 
 ## Done
 
@@ -25,8 +27,9 @@ discussions and pull requests behind each item.
 
 ## Now
 
-* Fix silicate's GitHub master (Michael, from fixes on another system).
-  CRAN 0.7.1 is fine.
+* Fix silicate's GitHub master. No work is in progress on GitHub (no open
+  PRs or branches for it, checked 10 Oct 2026); Michael may have fixes on
+  another system. CRAN 0.7.1 is fine.
 
 ## Next
 
@@ -34,24 +37,25 @@ From the survey's first moves, not yet started:
 
 1. Settle the six spec decisions ([mesh-spec-v0.1.md](mesh-spec-v0.1.md)),
    before cdtr goes to CRAN.
-2. Turn the trianglewins cases into the conformance corpus, plus grid and
+2. cdtr to CRAN, then laridae, emitting the spec's triangle form.
+3. Turn the trianglewins cases into the conformance corpus, plus grid and
    HEALPix cases; add `tw_conform()`.
-3. Settle the PSLG reader in wkpool: merge `pslg_from_wk()` into
+4. Settle the PSLG reader in wkpool: merge `pslg_from_wk()` into
    `as_pslg()`.
-4. Drawable meshes in meshcore: `grid_mesh()` (from quadmesh),
+5. Drawable meshes in meshcore: `grid_mesh()` (from quadmesh),
    `mesh_project()` (aobcore's error-bounded refinement), `mesh_arrow()`;
    then point anglr at it on a branch.
 
 From what the prototypes found (see [findings.md](findings.md)):
 
-5. Point to cell, the next verb.
-6. An `orient()` verb, and an antimeridian rule in the spec.
-7. 64-bit cell ids.
-8. Read meshes through the MDAL bridge in silicate2's UGRID model; replace
+6. Point to cell, the next verb.
+7. An `orient()` verb, and an antimeridian rule in the spec.
+8. 64-bit cell ids.
+9. Read meshes through the MDAL bridge in silicate2's UGRID model; replace
    meshcore's use of sf internals with gdalraster multidim.
-9. Port SC, PATH, ARC and TRI onto wkpool in silicate2 with the `sc_*`
-   names unchanged.
-10. FACE (holes), then links between models and layers.
+10. Port SC, PATH, ARC and TRI onto wkpool in silicate2 with the `sc_*`
+    names unchanged.
+11. FACE (holes), then links between models and layers.
 
 ## Open decisions
 
