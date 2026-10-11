@@ -65,7 +65,7 @@ cdtr and trowel need the small additions in the last column.
 | | id | int32, optional | Stable across edits | Only the live handles |
 | triangles | v0, v1, v2 | int32 | Vertex rows | trowel returns ids, so the reader maps them |
 | | depth | int32 | Constraint crossings from outside (Decision 1) | trowel counts a doubled boundary once |
-| constraints | v0, v1 | int32 | Mesh edges lying on input segments | cdtr `S`; trowel `mesh_constraint_edges` |
+| constraints | v0, v1 | int32 | Mesh edges lying on input segments (Decision 7) | cdtr `S`; laridae `segments`; trowel `mesh_constraint_edges` |
 | | segment | int32 | Lowest input segment row covering the edge | laridae only |
 | | count | int32 | Input segments covering the edge | laridae only |
 | report | one row | metadata | Backend name and version, `min_edge_length`, unrefined counts, the `erase` choice used | Each engine reports different counts |
@@ -99,9 +99,10 @@ each quad becomes two triangles.
 
 ## Decisions (settled 11 October 2026)
 
-Six questions needed an answer before cdtr goes to CRAN, because its
-output columns become a promise then. Michael settled all six on
-11 October 2026, accepting each proposal.
+Seven questions needed an answer before cdtr goes to CRAN, because its
+output columns become a promise then. Michael settled all seven on
+11 October 2026, accepting each proposal (the seventh, the constraint
+table name, after meshcore `tri_form()` was built).
 
 | # | Question | Decision | Why |
 |---|---|---|---|
@@ -111,6 +112,7 @@ output columns become a promise then. Michael settled all six on
 | 4 | How `origin` is encoded | Dictionary string: `input`, `crossing`, `steiner`, plus `grid` (and `lattice`) for computed meshes | laridae and trowel already convert their integer codes to these strings |
 | 5 | Must engines return the constraint-to-input map? | Optional in v0.1. Whether v0.2 requires it is open | Only laridae has it; it makes labels free |
 | 6 | Where does the spec live until it has a name? | Drawable form: scenespec. PSLG and triangle forms: `spec/` in trianglewins next to the corpus. Big picture and cross-links: this folder | Follows allboa decision 0011: a schema lives with its first producer until a second exists |
+| 7 | What is the constraint table in the triangle form called? | `constraints` (settled 11 October 2026). laridae (`segments`) and cdtr (`S`) are renamed by meshcore `tri_form()` | The PSLG form's `segments` are input segments; the triangle form's table holds mesh edges lying on them, so a different name keeps the two apart |
 
 What follows for the producers:
 
