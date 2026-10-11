@@ -49,5 +49,5 @@ level, crs, rung, source, ...) and a class `c("<MODEL>", "meshcore_model")`.
 
 Unlike the model tables above, triangle form rows are 1-based row
 references (spec Decision 2), not 0-based keys. The constraint table is
-called `constraints` as in the spec; laridae says `segments` and cdtr `S`.
-That name is still open.
+called `constraints` as in the spec; laridae says `segments` and cdtr `S`, and
+`tri_form()` renames both (spec Decision 7).

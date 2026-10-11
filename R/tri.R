@@ -19,7 +19,7 @@
 #'   mesh edges lying on input segments, and, when the engine provides them,
 #'   `segment` (the lowest input segment covering the edge) and `count` (how
 #'   many input segments cover it). laridae calls this table `segments` and
-#'   cdtr calls it `S`; the spec name is used here until that is settled.
+#'   cdtr calls it `S`; `tri_form()` renames both to the spec name (Decision 7).
 #' * `report`: one row recording `backend`, `package` (engine version),
 #'   `erase`, `refined`, `min_edge_length` and the row counts.
 #'
