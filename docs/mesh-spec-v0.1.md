@@ -1,6 +1,6 @@
-# Mesh spec v0.1 (draft)
+# Mesh spec v0.1
 
-Drafted 7 October 2026. Working name for the spec: meshspec.
+Drafted 7 October 2026; the six open decisions were settled 11 October 2026. Working name for the spec: meshspec.
 
 ## Conventions
 
@@ -97,19 +97,28 @@ and y, index from v0, v1, v2 minus 1, and faces from depth. From a grid,
 quadmesh's corner or centre interpretation sets the vertex lattice, and
 each quad becomes two triangles.
 
-## Decisions v0.1 must make
+## Decisions (settled 11 October 2026)
 
-Six questions need an answer before cdtr goes to CRAN, because its output
-columns become a promise then.
+Six questions needed an answer before cdtr goes to CRAN, because its
+output columns become a promise then. Michael settled all six on
+11 October 2026, accepting each proposal.
 
-| # | Question | Proposal | Why |
+| # | Question | Decision | Why |
 |---|---|---|---|
-| 1 | Does `depth` count a doubled boundary once or once per copy? | Per copy in `depth` (cdtr and laridae). Optional `depth_distinct` counted once; change trowel to match | Two of three engines agree; the harness computes both (`depth_k`, `depth_1`) |
-| 2 | Index base | 1-based in R, 0-based in Arrow, converted at serialisation | R users index rows; scenespec and GPU APIs use 0-based uint32. meshcore cell and vertex ids are 0-based keys, not row positions |
-| 3 | Triangle winding | Counter-clockwise in xy (positive signed area) | Renderers cull by winding; the harness does not measure it yet. UGRID data is often clockwise (see [findings.md](findings.md)) |
+| 1 | Does `depth` count a doubled boundary once or once per copy? | Per copy in `depth` (as cdtr and laridae do). Optional `depth_distinct` counted once; trowel changes to match | Two of three engines agree; the harness computes both (`depth_k`, `depth_1`) |
+| 2 | Index base | 1-based in R, 0-based in Arrow, converted at serialisation. meshcore cell and vertex ids stay 0-based keys | R users index rows; scenespec and GPU APIs use 0-based uint32. Ids are keys, not row positions |
+| 3 | Triangle winding | Counter-clockwise in xy (positive signed area) | Renderers cull by winding. The harness does not measure it yet, and UGRID data is often clockwise (see [findings.md](findings.md)) |
 | 4 | How `origin` is encoded | Dictionary string: `input`, `crossing`, `steiner`, plus `grid` (and `lattice`) for computed meshes | laridae and trowel already convert their integer codes to these strings |
-| 5 | Must engines return the constraint-to-input map? | Optional in v0.1, required in v0.2 | Only laridae has it; it makes labels free |
+| 5 | Must engines return the constraint-to-input map? | Optional in v0.1. Whether v0.2 requires it is open | Only laridae has it; it makes labels free |
 | 6 | Where does the spec live until it has a name? | Drawable form: scenespec. PSLG and triangle forms: `spec/` in trianglewins next to the corpus. Big picture and cross-links: this folder | Follows allboa decision 0011: a schema lives with its first producer until a second exists |
+
+What follows for the producers:
+
+* cdtr: add `origin` (telling crossing from Steiner vertices), emit CCW
+  triangles, keep per-copy `depth`; `depth_distinct` and the constraint map
+  are optional.
+* trowel: count `depth` per copy, map ids to rows in the reader.
+* trianglewins: measure winding, and check `depth` against `depth_k`.
 
 ## Conformance corpus
 

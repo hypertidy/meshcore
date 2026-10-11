@@ -8,7 +8,7 @@ notes cover the rest.
 | File | What it holds |
 |---|---|
 | [design.md](design.md) | The landscape survey, the reframing of silicate, and the chosen plan (Option B) |
-| [mesh-spec-v0.1.md](mesh-spec-v0.1.md) | Draft spec for three mesh forms (PSLG, triangle, drawable), the six open decisions, the conformance corpus |
+| [mesh-spec-v0.1.md](mesh-spec-v0.1.md) | Draft spec for three mesh forms (PSLG, triangle, drawable), the six decisions (settled 11 Oct 2026), the conformance corpus |
 | [model-zoo.md](model-zoo.md) | Models, verbs and machinery; the vertex identity ladder; the zoo of models and its priorities |
 | [findings.md](findings.md) | What building things found: benchmarks, the keyed join, the MDAL and GDAL multidim bridge, the gaps |
 | [roadmap.md](roadmap.md) | Done, now, next, and open decisions |
