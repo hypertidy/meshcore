@@ -2,3 +2,4 @@
 ^README\.Rmd$
 ^inst/scripts/.*\.png$
 ^docs$
+^\.github$

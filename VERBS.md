@@ -39,3 +39,15 @@ level, crs, rung, source, ...) and a class `c("<MODEL>", "meshcore_model")`.
 | `keyed_array(values, dims, key_dim, key = NULL, coords = list())` | R array (fastest dim first), named dim sizes, keyed dimension name(s), cell ids along it (`NULL` when computed, as for GRID x/y) |
 | `read_array(dsn, name = NULL)` | GDAL classic raster (keyed on x+y) or multidim array (keyed on the dimension of its `coordinates` variable, default `cell_ids`) |
 | `long_join(cl, idx, m, a)` | helper for `join_array()` methods: `cl` = cells table, `idx` = position along the keyed dim per row of `cl`, `m` = values as matrix (keyed dim x other dims) |
+
+## Triangle form (mesh spec v0.1)
+
+| verb | returns |
+|------|---------|
+| `tri_form(x, erase, crs)` | engine output (cdtr list, laridae tables or handle) as the spec triangle form: `vertices` (x, y, attributes, `origin` factor, `id`), `triangles` (`v0`, `v1`, `v2` 1-based CCW rows, `depth`, `depth_distinct`), `constraints` (`v0 < v1`, `segment`, `count` when the engine has them), one-row `report`; attrs `meshspec`, `input_map`, `unrefined` |
+| `tri_mesh(x, y, s0, s1, PA, engine = "cdtr", ...)` | runs cdtr (default) or laridae and returns `tri_form()` of the result |
+
+Unlike the model tables above, triangle form rows are 1-based row
+references (spec Decision 2), not 0-based keys. The constraint table is
+called `constraints` as in the spec; laridae says `segments` and cdtr `S`.
+That name is still open.

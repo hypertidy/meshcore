@@ -16,6 +16,12 @@ Imports:
     wk
 Suggests:
     testthat (>= 3.0.0),
-    wkpool
+    wkpool,
+    cdtr,
+    laridae
+Remotes:
+    hypertidy/wkpool,
+    hypertidy/cdtr,
+    hypertidy/laridae
 Config/testthat/edition: 3
 RoxygenNote: 7.3.1
