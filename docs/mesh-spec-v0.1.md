@@ -60,7 +60,7 @@ cdtr and trowel need the small additions in the last column.
 
 | Table | Column | Type | Meaning | Gaps today |
 |---|---|---|---|---|
-| vertices | x, y, (z), attributes | float64 | Input vertices first, in PSLG row order, then new ones | cdtr returns a P matrix plus `input_map` |
+| vertices | x, y, (z), attributes | float64 | Input vertices first, in PSLG row order, then new ones (serialised forms may reorder; Decision 8) | cdtr returns a P matrix plus `input_map` |
 | | origin | dictionary string | `input`, `crossing` or `steiner` | cdtr has none (crossing and Steiner not told apart) |
 | | id | int32, optional | Stable across edits | Only the live handles |
 | triangles | v0, v1, v2 | int32 | Vertex rows | trowel returns ids, so the reader maps them |
@@ -113,6 +113,7 @@ table name, after meshcore `tri_form()` was built).
 | 5 | Must engines return the constraint-to-input map? | Optional in v0.1, required in v0.2 (v0.2 decided 14 October 2026) | Only laridae has it; it makes labels free |
 | 6 | Where does the spec live until it has a name? | Drawable form: scenespec. PSLG and triangle forms: `spec/` in trianglewins next to the corpus. Big picture and cross-links: this folder | Follows allboa decision 0011: a schema lives with its first producer until a second exists |
 | 7 | What is the constraint table in the triangle form called? | `constraints` (settled 11 October 2026). laridae (`segments`) and cdtr (`S`) are renamed by meshcore `tri_form()` | The PSLG form's `segments` are input segments; the triangle form's table holds mesh edges lying on them, so a different name keeps the two apart |
+| 8 | Vertex order: input-first (this spec) or first appearance in the triangles (the GeoArrow triangles proposal)? | Both, at different layers (settled 14 October 2026). The triangle form keeps input vertices first, in PSLG row order. When a mesh is serialised as `geoarrow.triangles`, vertices are renumbered by first appearance and the vertex table carries `input_row`, the triangle-form row each vertex came from | Input-first makes the map back to the input free; first appearance is what lets the decoded Parquet layout rebuild the same ids and lets an IPC stream add only new vertices per batch. No order of triangles makes the two coincide. See the trianglewins geoarrow.triangles pilot |
 
 What follows for the producers:
 
