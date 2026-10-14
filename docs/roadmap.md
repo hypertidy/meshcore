@@ -25,7 +25,7 @@ requests behind each item.
 * Docs round: READMEs and figures in wkpool #7, meshcore #1, silicate #146,
   rmdal #2; overview page; this folder.
 * The six spec v0.1 decisions, settled 11 Oct 2026 (all as proposed; the
-  constraint map is optional in v0.1, v0.2 open). See
+  constraint map is optional in v0.1 and, decided 14 Oct, required in v0.2). See
   [mesh-spec-v0.1.md](mesh-spec-v0.1.md).
 
 ## Now
@@ -67,7 +67,6 @@ From what the prototypes found (see [findings.md](findings.md)):
 
 * Final names: meshcore, silicate2, meshspec.
 * Whether and how silicate2 merges back into silicate.
-* Whether spec v0.2 requires the constraint-to-input map.
 * GRID hierarchy semantics (2 x 2 blocks vs GDAL overviews).
 * Where the PSLG and triangle forms of the spec live (trianglewins `spec/`
   is the proposal; this folder holds the big picture).
