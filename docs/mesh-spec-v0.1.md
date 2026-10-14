@@ -122,8 +122,11 @@ What follows for the producers:
 * trowel: count `depth` per copy, map ids to rows in the reader.
 * trianglewins: measure winding, and check `depth` against `depth_k`.
 * All engines, for v0.2: return the constraint-to-input map (`segment`
-  and `count` on `constraints`). cdtr and trowel need it added; laridae
-  has it.
+  and `count` on `constraints`). laridae has it. trowel needs no engine
+  change: the map follows from its segment chains (`mesh_segments()`) in
+  meshcore `tri_form()`. cdtr needs a small C++ addition using CDT's
+  `pieceToOriginals`, parked for a later cdtr release while the first
+  version is in the CRAN queue (14 October 2026).
 
 ## Conformance corpus
 
