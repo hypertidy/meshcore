@@ -75,8 +75,20 @@ Data are sampled in their own CRS at mesh vertices; no raster is warped.
 because renderers are float32: a UTM northing of 5,250,000 m has a float32
 spacing of 0.5 m.
 
+## On the wire, and in the browser
+
+| verb | returns |
+|------|---------|
+| `write_mesh_arrow(x, dir, ...)` | one Arrow IPC stream per table, `<dir>/<table>.arrows`; row references 0-based, and each table's `meshspec:refs` metadata names the table each reference column points at. Link tables (`face_points`, `face_stats`) go in `...` |
+| `read_mesh_arrow(dir)` | the same R form, references back to 1-based |
+| `mesh_viewer(dir)` | copies meshview beside `mesh/` and `points/`: hover a face to read its `face_stats` row, vertices and linked returns with their source file and position, picked on the GPU by face id |
+
+meshview's source is in `inst/viewer/src`; `npm run build` in
+`inst/viewer` rebuilds `meshview.js` (three.js and Arrow JS bundled, so it
+needs no network).
+
 The point-cloud form itself is in
 [pointcore](https://github.com/hypertidy/pointcore): `read_points()`,
-`points_tin()` and `face_points()`. See
+`read_ept()`, `points_tin()`, `face_points()` and `face_stats()`. See
 [docs/points-form-draft.md](docs/points-form-draft.md) and
 `inst/scripts/points-demo.R`.

@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>meshview</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* layout: a full-height viewport with the surface on the left and the joined rows on the right; stacked on phones */
+:root {
+  --bg: #eef1f4;
+  --panel: #ffffff;
+  --fg: #1d2630;
+  --muted: #5b6875;
+  --rule: #d4dbe2;
+  --accent: #b38600;
+  --canvas: #2a3139;
+  --font-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --font-data: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #151a1f; --panel: #1c2228; --fg: #e3e8ed; --muted: #95a2ae; --rule: #2e3740; --accent: #ffd400; --canvas: #20262c;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #151a1f; --panel: #1c2228; --fg: #e3e8ed; --muted: #95a2ae; --rule: #2e3740; --accent: #ffd400; --canvas: #20262c;
+  color-scheme: dark;
+}
+[hidden] { display: none !important; }
+html, body { height: 100%; }
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 14px;
+  display: flex; flex-direction: column;
+}
+header {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px;
+  padding-block: 10px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  border-bottom: 1px solid var(--rule); background: var(--panel);
+}
+header h1 { font-size: 16px; margin: 0; letter-spacing: 0.02em; }
+header label { display: flex; align-items: center; gap: 6px; color: var(--muted); }
+select, input[type="range"] { font: inherit; accent-color: var(--accent); }
+select { padding: 2px 4px; border: 1px solid var(--rule); border-radius: 4px; background: var(--bg); color: var(--fg); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+#status { color: var(--muted); font-family: var(--font-data); font-size: 12px; flex-basis: 100%; }
+main { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 360px; }
+#view { width: 100%; height: 100%; display: block; background: var(--canvas); touch-action: none; }
+.stage { position: relative; min-width: 0; min-height: 0; }
+#legend, #pin {
+  position: absolute; left: 12px; font-family: var(--font-data); font-size: 12px; color: #e3e8ed;
+  background: rgba(20, 24, 28, 0.7); padding: 3px 8px; border-radius: 3px;
+}
+#legend { bottom: 12px; }
+#pin { top: 12px; }
+#pin:empty { display: none; }
+#drop {
+  position: absolute; inset: 24px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
+  border: 2px dashed var(--muted); border-radius: 8px; color: #e3e8ed; text-align: center; padding: 16px;
+}
+#drop p { max-width: 40ch; margin: 0; line-height: 1.5; }
+#drop input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.button { background: var(--accent); color: #151a1f; font-weight: 700; padding: 6px 14px; border-radius: 4px; cursor: pointer; }
+#files:focus-visible + .button, .button:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
+aside {
+  overflow-y: auto; border-left: 1px solid var(--rule); background: var(--panel);
+  padding-block: 12px; padding-left: 16px; padding-right: max(16px, env(safe-area-inset-right, 0px)); min-width: 0;
+}
+aside h2 { font-size: 18px; margin: 0; text-wrap: balance; }
+aside h3 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin: 18px 0 6px; }
+.sub, .hint { color: var(--muted); font-size: 12px; margin: 4px 0; }
+aside table { border-collapse: collapse; width: 100%; font-family: var(--font-data); font-size: 12px; font-variant-numeric: tabular-nums; }
+aside th, aside td { text-align: left; padding: 2px 6px 2px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+aside th { color: var(--muted); font-weight: 400; }
+aside td { text-align: right; }
+table.rows th { text-align: right; }
+aside a { color: var(--accent); word-break: break-all; }
+@media (max-width: 760px) {
+  main { grid-template-columns: minmax(0, 1fr); grid-template-rows: 60vh auto; }
+  aside { border-left: 0; border-top: 1px solid var(--rule); padding-left: max(16px, env(safe-area-inset-left, 0px)); }
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>meshview</h1>
+  <label for="colourby">Colour faces by <select id="colourby"></select></label>
+  <label for="exag">Vertical <input id="exag" type="range" min="1" max="5" step="0.5" value="1"> <span id="exagval">1.0x</span></label>
+  <label for="showpoints"><input id="showpoints" type="checkbox"> Returns</label>
+  <label for="hidemesh"><input id="hidemesh" type="checkbox"> Hide surface</label>
+  <div id="status">Loading</div>
+</header>
+<main>
+  <div class="stage">
+    <canvas id="view"></canvas>
+    <div id="legend"></div>
+    <div id="pin"></div>
+    <div id="drop">
+      <p>Choose the <code>.arrows</code> files that <code>write_mesh_arrow()</code> wrote (the mesh folder, and the points folder if you have it), or drop them here.</p>
+      <label for="files" class="button">Choose files</label>
+      <input id="files" type="file" multiple accept=".arrows">
+    </div>
+  </div>
+  <aside id="info"></aside>
+</main>
+<!--DATA-->
+<script src="meshview.js"></script>
+</body>
+</html>
