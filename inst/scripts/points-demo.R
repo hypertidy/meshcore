@@ -8,7 +8,7 @@
 ##
 ## Rscript inst/scripts/points-demo.R [path/to/Topography.laz] [outdir]
 library(meshcore)
-library(pointcore)
+library(pointcore)  # remotes::install_github("hypertidy/pointcore")
 
 args <- commandArgs(trailingOnly = TRUE)
 laz <- if (length(args) >= 1) args[1] else system.file("extdata", "Topography.laz", package = "lidR")

@@ -52,7 +52,7 @@ references (spec Decision 2), not 0-based keys. The constraint table is
 called `constraints` as in the spec; laridae says `segments` and cdtr `S`, and
 `tri_form()` renames both (spec Decision 7).
 
-## Connecting a mesh to its sources (branch `points-drape-pick`)
+## Connecting a mesh to its sources
 
 Data are sampled in their own CRS at mesh vertices; no raster is warped.
 
@@ -75,7 +75,8 @@ Data are sampled in their own CRS at mesh vertices; no raster is warped.
 because renderers are float32: a UTM northing of 5,250,000 m has a float32
 spacing of 0.5 m.
 
-The point-cloud form itself is in `pointcore/` on this branch (to move to its
-own repository): `read_points()`, `points_tin()` and `face_points()`. See
+The point-cloud form itself is in
+[pointcore](https://github.com/hypertidy/pointcore): `read_points()`,
+`points_tin()` and `face_points()`. See
 [docs/points-form-draft.md](docs/points-form-draft.md) and
 `inst/scripts/points-demo.R`.
