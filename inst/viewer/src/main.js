@@ -24,6 +24,13 @@ async function load(path, optional = false) {
     if (optional) return null;
     throw new Error('could not read ' + path + ' (' + r.status + ')');
   }
+  // hosts that serve only text get base64 (MESHVIEW_SUFFIX = '.arrows.b64.txt')
+  if (path.endsWith('.b64.txt')) {
+    const bin = atob((await r.text()).replace(/\s+/g, ''));
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return tableFromIPC(bytes);
+  }
   return tableFromIPC(new Uint8Array(await r.arrayBuffer()));
 }
 
@@ -72,7 +79,8 @@ function fmt(x, d = 3) {
 // tables by file name, from the network or from files the viewer chose
 function fromFetch() {
   const where = { vertices: 'mesh', triangles: 'mesh', face_points: 'mesh', face_stats: 'mesh', points: 'points', sources: 'points' };
-  return (name, optional) => load(base + '/' + where[name] + '/' + name + '.arrows', optional);
+  const suffix = window.MESHVIEW_SUFFIX || '.arrows';
+  return (name, optional) => load(base + '/' + where[name] + '/' + name + suffix, optional);
 }
 
 function fromFiles(files) {
