@@ -51,3 +51,31 @@ Unlike the model tables above, triangle form rows are 1-based row
 references (spec Decision 2), not 0-based keys. The constraint table is
 called `constraints` as in the spec; laridae says `segments` and cdtr `S`, and
 `tri_form()` renames both (spec Decision 7).
+
+## Connecting a mesh to its sources (branch `points-drape-pick`)
+
+Data are sampled in their own CRS at mesh vertices; no raster is warped.
+
+| verb | returns |
+|------|---------|
+| `locate(mesh, x, y)` | data.frame `face`, `u`, `v`: the triangle each point is in (x, y) and the weights of its second and third vertex; `NA` outside |
+| `sample_at_vertices(mesh, dsn, band, name, method)` | the mesh with a new vertex column read from a GDAL raster at the vertices (transformed into the raster's CRS); source recorded in `attr(, "sources")` |
+| `drape_uv(mesh, image, max_px = 0.25)` | the mesh with vertex `u`, `v` (u 0 at xmin, v 0 at row 0) by inverse projection, and per-triangle `uv_err_px`, the largest miss in source pixels of the linear blend at edge midpoints and centroid |
+| `pick(mesh, face, u, v, links, rows)` | `meshcore_pick`: the triangle row, its 3 vertex rows, numeric vertex columns blended at the point, the image column and row, and the linked source rows in the face |
+
+## Renderer adapters
+
+| verb | returns |
+|------|---------|
+| `as_mesh3d(mesh, z, texture, local_origin, exaggeration)` | rgl `mesh3d`, face order = triangle rows, attr `frame` |
+| `as_ray_mesh(mesh, z, texture, local_origin, exaggeration)` | rayvertex `ray_mesh` (y up: x, z, -y), face order = triangle rows, attr `frame` |
+| `pick_render(mesh, gbuffer, col, row, ray_mesh, lookfrom, lookat)` | `meshcore_pick` for a pixel of `rasterize_scene(debug = "all")`, by inverting its view-space position buffer; no renderer change needed |
+
+`local_origin` (float64) is subtracted before anything reaches a renderer,
+because renderers are float32: a UTM northing of 5,250,000 m has a float32
+spacing of 0.5 m.
+
+The point-cloud form itself is in `pointcore/` on this branch (to move to its
+own repository): `read_points()`, `points_tin()` and `face_points()`. See
+[docs/points-form-draft.md](docs/points-form-draft.md) and
+`inst/scripts/points-demo.R`.

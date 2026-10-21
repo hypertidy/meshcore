@@ -18,10 +18,15 @@ Suggests:
     testthat (>= 3.0.0),
     wkpool,
     cdtr,
-    laridae
+    laridae,
+    geometry,
+    terra,
+    rgl,
+    rayvertex
 Remotes:
     hypertidy/wkpool,
     hypertidy/cdtr,
-    hypertidy/laridae
+    hypertidy/laridae,
+    tylermorganwall/rayvertex
 Config/testthat/edition: 3
 RoxygenNote: 7.3.1

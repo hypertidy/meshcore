@@ -1,0 +1,4 @@
+S3method(print,pointcore_points)
+export(read_points)
+export(points_tin)
+export(face_points)
