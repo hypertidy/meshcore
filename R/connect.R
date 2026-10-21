@@ -55,7 +55,11 @@ locate <- function(mesh, x, y) {
   if (!requireNamespace("geometry", quietly = TRUE)) stop("locate() needs the geometry package")
   v <- mesh$vertices
   t <- as.matrix(mesh$triangles[c("v0", "v1", "v2")])
-  r <- geometry::tsearch(v$x, v$y, t, as.double(x), as.double(y), bary = TRUE)
+  ## tsearch's quadtree fails on large coordinates (UTM northings near
+  ## 6.4e6 m): search relative to the mesh's lower left corner
+  ox <- min(v$x)
+  oy <- min(v$y)
+  r <- geometry::tsearch(v$x - ox, v$y - oy, t, as.double(x) - ox, as.double(y) - oy, bary = TRUE)
   out <- data.frame(face = as.integer(r$idx), u = r$p[, 2], v = r$p[, 3])
   ## tsearch can miss points lying exactly on a hull vertex: give them the
   ## first triangle that uses the vertex, with all weight on it

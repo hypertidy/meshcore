@@ -15,6 +15,7 @@ Imports:
     sf,
     wk
 Suggests:
+    nanoarrow (>= 0.5.0),
     testthat (>= 3.0.0),
     wkpool,
     cdtr,

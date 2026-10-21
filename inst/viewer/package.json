@@ -1,0 +1,16 @@
+{
+  "name": "meshview",
+  "private": true,
+  "description": "Browser viewer for meshcore Arrow forms, with GPU face picking back to the source rows",
+  "license": "MIT",
+  "scripts": {
+    "build": "esbuild src/main.js --bundle --minify --format=iife --target=es2020 --legal-comments=eof --banner:js=\"/* meshview (meshcore, MIT). Bundles three 0.169.0 (MIT) and apache-arrow 17.0.0 (Apache-2.0). */\" --outfile=meshview.js && node build-html.js"
+  },
+  "dependencies": {
+    "apache-arrow": "17.0.0",
+    "three": "0.169.0"
+  },
+  "devDependencies": {
+    "esbuild": "0.24.0"
+  }
+}
