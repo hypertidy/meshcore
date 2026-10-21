@@ -3,3 +3,4 @@
 ^inst/scripts/.*\.png$
 ^docs$
 ^\.github$
+^pointcore$
