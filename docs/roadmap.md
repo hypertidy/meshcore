@@ -27,6 +27,9 @@ requests behind each item.
 * The six spec v0.1 decisions, settled 11 Oct 2026 (all as proposed; the
   constraint map is optional in v0.1 and, decided 14 Oct, required in v0.2). See
   [mesh-spec-v0.1.md](mesh-spec-v0.1.md).
+* cdtr returns `edge_sources` (hypertidy/cdtr#7); spec v0.2 draft defines
+  the table and overlay labelling by propagation
+  ([mesh-spec-v0.2.md](mesh-spec-v0.2.md)).
 
 ## Now
 

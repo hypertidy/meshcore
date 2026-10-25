@@ -110,7 +110,7 @@ table name, after meshcore `tri_form()` was built).
 | 2 | Index base | 1-based in R, 0-based in Arrow, converted at serialisation. meshcore cell and vertex ids stay 0-based keys | R users index rows; scenespec and GPU APIs use 0-based uint32. Ids are keys, not row positions |
 | 3 | Triangle winding | Counter-clockwise in xy (positive signed area) | Renderers cull by winding. The harness does not measure it yet, and UGRID data is often clockwise (see [findings.md](findings.md)) |
 | 4 | How `origin` is encoded | Dictionary string: `input`, `crossing`, `steiner`, plus `grid` (and `lattice`) for computed meshes | laridae and trowel already convert their integer codes to these strings |
-| 5 | Must engines return the constraint-to-input map? | Optional in v0.1, required in v0.2 (v0.2 decided 14 October 2026) | Only laridae has it; it makes labels free |
+| 5 | Must engines return the constraint-to-input map? | Optional in v0.1, required in v0.2 (v0.2 decided 14 October 2026) as the `edge_sources` table, see [mesh-spec-v0.2.md](mesh-spec-v0.2.md) | Only laridae has it; it makes labels free |
 | 6 | Where does the spec live until it has a name? | Drawable form: scenespec. PSLG and triangle forms: `spec/` in trianglewins next to the corpus. Big picture and cross-links: this folder | Follows allboa decision 0011: a schema lives with its first producer until a second exists |
 | 7 | What is the constraint table in the triangle form called? | `constraints` (settled 11 October 2026). laridae (`segments`) and cdtr (`S`) are renamed by meshcore `tri_form()` | The PSLG form's `segments` are input segments; the triangle form's table holds mesh edges lying on them, so a different name keeps the two apart |
 | 8 | Vertex order: input-first (this spec) or first appearance in the triangles (the GeoArrow triangles proposal)? | Both, at different layers (settled 14 October 2026). The triangle form keeps input vertices first, in PSLG row order. When a mesh is serialised as `geoarrow.triangles`, vertices are renumbered by first appearance and the vertex table carries `input_row`, the triangle-form row each vertex came from | Input-first makes the map back to the input free; first appearance is what lets the decoded Parquet layout rebuild the same ids and lets an IPC stream add only new vertices per batch. No order of triangles makes the two coincide. See the trianglewins geoarrow.triangles pilot |
@@ -127,7 +127,8 @@ What follows for the producers:
   change: the map follows from its segment chains (`mesh_segments()`) in
   meshcore `tri_form()`. cdtr needs a small C++ addition using CDT's
   `pieceToOriginals`, parked for a later cdtr release while the first
-  version is in the CRAN queue (14 October 2026).
+  version is in the CRAN queue (14 October 2026). Superseded by v0.2: the
+  map is the `edge_sources` table, which cdtr now returns (hypertidy/cdtr#7).
 
 ## Conformance corpus
 
