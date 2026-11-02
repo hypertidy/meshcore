@@ -11,7 +11,8 @@ engines <- function() {
 
 expect_tri_form <- function(m, n_input) {
   expect_s3_class(m, "meshcore_tri")
-  expect_named(m, c("vertices", "triangles", "constraints", "report"))
+  expect_identical(names(m)[1:4], c("vertices", "triangles", "constraints", "report"))
+  expect_true(all(names(m) %in% c("vertices", "triangles", "constraints", "report", "edge_sources")))
   expect_identical(attr(m, "meshspec")$form, "tri")
   v <- m$vertices; t <- m$triangles; s <- m$constraints
   expect_true(all(c("x", "y", "origin") %in% names(v)))

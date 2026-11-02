@@ -51,7 +51,7 @@ constraint-to-input map, and refines where the domain is the convex hull.}
 }
 \value{
 A list of class `meshcore_tri` with `vertices`, `triangles`,
-  `constraints` and `report`.
+  `constraints`, `report` and, when the engine gives it, `edge_sources`.
 }
 \description{
 `tri_form()` normalises the output of a triangulation engine to the
@@ -75,6 +75,15 @@ The form is a named list of four data frames:
   `segment` (the lowest input segment covering the edge) and `count` (how
   many input segments cover it). laridae calls this table `segments` and
   cdtr calls it `S`; `tri_form()` renames both to the spec name (Decision 7).
+* `edge_sources` (mesh spec v0.2, when the engine gives it, as
+  `cdtr::cdt_triangulate(edge_sources = TRUE)` does): one row per
+  constraint edge and covering input segment, `edge` (row of
+  `constraints`), `segment` (the input segment, as given to the engine) and
+  `forward` (TRUE when the segment runs from `v0` to `v1` of its
+  `constraints` row), sorted by `edge` then `segment`. `tri_form()` remaps
+  `edge` when it sorts `constraints` and flips `forward` where it swaps an
+  edge's ends, and derives `constraints$segment` and `constraints$count`
+  from it. The form is then written as spec version 0.2.
 * `report`: one row recording `backend`, `package` (engine version),
   `erase`, `refined`, `min_edge_length` and the row counts.
 
@@ -94,5 +103,7 @@ if (requireNamespace("cdtr", quietly = TRUE)) {
   m
   ## the same from an engine result
   tri_form(cdtr::cdt_triangulate(x, y, s0, s1, erase = "holes"), erase = "holes")
+  ## which input segments cover each constraint edge (spec v0.2)
+  head(m$edge_sources)
 }
 }

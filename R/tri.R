@@ -20,6 +20,15 @@
 #'   `segment` (the lowest input segment covering the edge) and `count` (how
 #'   many input segments cover it). laridae calls this table `segments` and
 #'   cdtr calls it `S`; `tri_form()` renames both to the spec name (Decision 7).
+#' * `edge_sources` (mesh spec v0.2, when the engine gives it, as
+#'   `cdtr::cdt_triangulate(edge_sources = TRUE)` does): one row per
+#'   constraint edge and covering input segment, `edge` (row of
+#'   `constraints`), `segment` (the input segment, as given to the engine) and
+#'   `forward` (TRUE when the segment runs from `v0` to `v1` of its
+#'   `constraints` row), sorted by `edge` then `segment`. `tri_form()` remaps
+#'   `edge` when it sorts `constraints` and flips `forward` where it swaps an
+#'   edge's ends, and derives `constraints$segment` and `constraints$count`
+#'   from it. The form is then written as spec version 0.2.
 #' * `report`: one row recording `backend`, `package` (engine version),
 #'   `erase`, `refined`, `min_edge_length` and the row counts.
 #'
@@ -48,7 +57,7 @@
 #' @param max_area,min_angle Refinement targets, or `NULL` for none.
 #' @param ... Passed to the engine.
 #' @returns A list of class `meshcore_tri` with `vertices`, `triangles`,
-#'   `constraints` and `report`.
+#'   `constraints`, `report` and, when the engine gives it, `edge_sources`.
 #' @export
 #' @examples
 #' if (requireNamespace("cdtr", quietly = TRUE)) {
@@ -60,6 +69,8 @@
 #'   m
 #'   ## the same from an engine result
 #'   tri_form(cdtr::cdt_triangulate(x, y, s0, s1, erase = "holes"), erase = "holes")
+#'   ## which input segments cover each constraint edge (spec v0.2)
+#'   head(m$edge_sources)
 #' }
 tri_form <- function(x, erase = NULL, crs = NA_character_) {
   if (inherits(x, "meshcore_tri")) return(x)
@@ -98,9 +109,14 @@ tri_mesh <- function(x, y, s0 = NULL, s1 = NULL, PA = NULL,
   }
   if (engine == "cdtr") {
     if (!requireNamespace("cdtr", quietly = TRUE)) stop("engine \"cdtr\" needs the cdtr package")
-    r <- cdtr::cdt_triangulate_attr(x, y, s0, s1, PA = PA,
-                                    max_area = max_area, min_angle = min_angle,
-                                    erase = erase, depth_distinct = TRUE, ...)
+    args <- list(x, y, s0, s1, PA = PA, max_area = max_area, min_angle = min_angle,
+                 erase = erase, depth_distinct = TRUE, ...)
+    ## cdtr since hypertidy/cdtr#7 gives the constraint-to-input map (spec v0.2)
+    if (length(s0) > 0L && is.null(args$edge_sources) &&
+        "edge_sources" %in% names(formals(cdtr::cdt_triangulate))) {
+      args$edge_sources <- TRUE
+    }
+    r <- do.call(cdtr::cdt_triangulate_attr, args)
   } else {
     if (!requireNamespace("laridae", quietly = TRUE)) stop("engine \"laridae\" needs the laridae package")
     r <- laridae::lari_triangulate(x, y, s0, s1, PA = PA,
@@ -127,13 +143,15 @@ tri_form_cdtr <- function(r, erase, crs) {
                           depth = as.integer(r$depth))
   if (!is.null(r$depth_distinct)) triangles$depth_distinct <- as.integer(r$depth_distinct)
   constraints <- data.frame(v0 = pmin(r$S[, 1], r$S[, 2]), v1 = pmax(r$S[, 1], r$S[, 2]))
+  swapped <- r$S[, 1] > r$S[, 2]
   report <- data.frame(backend = "cdtr", package = pkg_version("cdtr"),
                        erase = erase %||% NA_character_,
                        refined = nrow(P) > (r$n_input + (r$n_crossing %||% 0L)),
                        min_edge_length = as.double(r$min_edge_length %||% NA_real_),
                        stringsAsFactors = FALSE)
   new_tri(vertices, triangles, constraints, report,
-          input_map = as.integer(r$input_map), unrefined = r$unrefined, crs = crs)
+          input_map = as.integer(r$input_map), unrefined = r$unrefined, crs = crs,
+          edge_sources = r$edge_sources, swapped = swapped)
 }
 
 tri_form_laridae <- function(r, crs) {
@@ -145,6 +163,7 @@ tri_form_laridae <- function(r, crs) {
   triangles <- r$triangles
   constraints <- r$segments
   sw <- constraints$v0 > constraints$v1
+  swapped <- sw
   if (any(sw)) {
     v0 <- constraints$v0
     constraints$v0[sw] <- constraints$v1[sw]
@@ -160,24 +179,51 @@ tri_form_laridae <- function(r, crs) {
   input_map <- NULL
   if (!is.null(r$ids) && !is.null(vertices$id)) input_map <- match(r$ids, vertices$id)
   new_tri(vertices, triangles, constraints, report,
-          input_map = input_map, unrefined = r$unrefined %||% rep, crs = crs)
+          input_map = input_map, unrefined = r$unrefined %||% rep, crs = crs,
+          edge_sources = r$edge_sources, swapped = swapped)
 }
 
-new_tri <- function(vertices, triangles, constraints, report, input_map, unrefined, crs) {
+## `edge_sources`, when given, refers to the engine's constraint rows and
+## directions; `swapped` marks the engine rows whose ends were swapped to
+## make v0 < v1.
+new_tri <- function(vertices, triangles, constraints, report, input_map, unrefined, crs,
+                    edge_sources = NULL, swapped = NULL) {
   for (v in c("v0", "v1", "v2")) triangles[[v]] <- as.integer(triangles[[v]])
   for (v in c("v0", "v1")) constraints[[v]] <- as.integer(constraints[[v]])
   triangles <- ccw_triangles(vertices$x, vertices$y, triangles)
   o <- order(constraints$v0, constraints$v1)
   constraints <- constraints[o, , drop = FALSE]
+  if (!is.null(edge_sources)) {
+    es <- spec_edge_sources(edge_sources, o, swapped)
+    constraints$segment <- es$segment[match(seq_len(nrow(constraints)), es$edge)]
+    constraints$count <- tabulate(es$edge, nbins = nrow(constraints))
+  }
   rownames(constraints) <- rownames(triangles) <- rownames(vertices) <- NULL
   report$n_vertices <- nrow(vertices)
   report$n_triangles <- nrow(triangles)
   report$n_constraints <- nrow(constraints)
-  structure(list(vertices = vertices, triangles = triangles,
-                 constraints = constraints, report = report),
-            meshspec = list(version = "0.1", form = "tri", crs = crs),
+  out <- list(vertices = vertices, triangles = triangles,
+              constraints = constraints, report = report)
+  if (!is.null(edge_sources)) out$edge_sources <- es
+  structure(out,
+            meshspec = list(version = if (is.null(edge_sources)) "0.1" else "0.2",
+                            form = "tri", crs = crs),
             input_map = input_map, unrefined = unrefined,
             class = "meshcore_tri")
+}
+
+## edge_sources against the sorted constraints: `o` is the sort order of the
+## engine's rows, so engine row o[k] becomes row k; rows whose ends were
+## swapped have their direction flipped. Sorted by edge, then segment.
+spec_edge_sources <- function(es, o, swapped = NULL) {
+  edge <- as.integer(es$edge)
+  forward <- as.logical(es$forward)
+  if (!is.null(swapped)) forward <- xor(forward, swapped[edge])
+  edge <- match(edge, o)
+  out <- data.frame(edge = edge, segment = as.integer(es$segment), forward = forward)
+  out <- out[order(out$edge, out$segment), , drop = FALSE]
+  rownames(out) <- NULL
+  out
 }
 
 ## Decision 3: counter-clockwise in xy. Both engines already wind CCW; this
