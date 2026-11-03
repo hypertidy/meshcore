@@ -36,6 +36,7 @@ mesh_refs <- list(
   vertices = c(input_row = "points"),
   triangles = c(v0 = "vertices", v1 = "vertices", v2 = "vertices"),
   constraints = c(v0 = "vertices", v1 = "vertices", segment = "segments"),
+  edge_sources = c(edge = "constraints", segment = "segments"),
   segments = c(s0 = "vertices", s1 = "vertices", path = "paths", edge = "edges"),
   edges = c(e0 = "vertices", e1 = "vertices"),
   points = c(source = "sources"),

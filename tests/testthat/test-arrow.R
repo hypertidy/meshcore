@@ -48,3 +48,23 @@ test_that("locate() works at UTM-sized coordinates", {
   loc <- locate(m, 534000.5, 6462400.5)
   expect_false(is.na(loc$face))
 })
+
+test_that("edge_sources round trips through Arrow with 0-based refs", {
+  skip_if_not_installed("nanoarrow", "0.5.0")
+  skip_if_not_installed("cdtr")
+  skip_if_not("edge_sources" %in% names(formals(cdtr::cdt_triangulate)))
+  x <- c(0, 1, 1, 0, 1, 2, 2, 1)
+  y <- c(0, 0, 1, 1, 0, 0, 1, 1)
+  m <- tri_mesh(x, y, 1:8, c(2, 3, 4, 1, 6, 7, 8, 5))
+  d <- tempfile("mesharrow")
+  write_mesh_arrow(m, d)
+  st <- nanoarrow::read_nanoarrow(file.path(d, "edge_sources.arrows"))
+  meta <- st$get_schema()$metadata
+  expect_equal(meta[["meshspec:version"]], "0.2")
+  expect_equal(jsonlite::fromJSON(meta[["meshspec:refs"]]),
+               list(edge = "constraints", segment = "segments"))
+  expect_equal(as.data.frame(st)$edge, m$edge_sources$edge - 1L)
+  r <- read_mesh_arrow(d)
+  expect_identical(r$edge_sources$edge, m$edge_sources$edge)
+  expect_identical(r$edge_sources$forward, m$edge_sources$forward)
+})
