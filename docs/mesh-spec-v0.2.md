@@ -78,7 +78,7 @@ beside it as its own Arrow table, with `constraints` written out as `v0`,
 |---|---|---|
 | cdtr | Done: `cdt_triangulate(edge_sources = TRUE)` (hypertidy/cdtr#7, development version) | Returns `edge`, `segment`, `forward` against cdtr's `S` rows, 1-based. Built from CDT's `pieceToOriginals`; `forward` from the sign of the dot product of the edge and the input segment |
 | meshcore `tri_form()` | Done: `tri_mesh(engine = "cdtr")` asks cdtr for it, and `tri_form()` carries any engine's `edge_sources` through | `tri_form()` sorts `constraints` and orders each row `v0 < v1`, so it remaps `edge` and flips `forward` where it swaps, derives `constraints$segment` and `count`, and writes the form as version 0.2. `write_mesh_arrow()` writes the table with `meshspec:refs` `{"edge":"constraints","segment":"segments"}`. tests/testthat/test-edge-sources.R checks the rules above, the two-square example and Annex A (`inconsistent_edges == 0`) |
-| laridae | Gap | `segments` has the lowest `segment` and `count`; CGAL's constraint hierarchy holds every covering constraint (`contexts`). Return all of them with direction, on the exact path too |
+| laridae | Done: `lari_tables()`, `lari_triangulate()` and `lari_edge_sources()` (hypertidy/laridae#15, development version); exact path still a gap | Read from CGAL's constraint contexts, so every coincident or collinear input has a row; `forward` from the context's vertex order, no arithmetic. Agrees with cdtr row for row, and `tri_mesh(engine = "laridae")` carries it with no meshcore change. `lari_cdt(exact = TRUE)` (branch exact-cdt) does not return it yet |
 | trowel | Derivable | From its segment chains (`mesh_segments()`) in `tri_form()`, no engine change |
 
 ## Annex A: overlay labelling by propagation
