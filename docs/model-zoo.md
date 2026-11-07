@@ -81,7 +81,7 @@ models extend it to computed vertices.
 | HALFEDGE | half-edge | Stored | Structural | What the live handles are underneath | Later |
 | SIMPLEX(k) | k-simplex | Stored | Structural | Generalises TRI to tetrahedra | Later |
 | TRACK | path with time | Stored (xyt); identity by (track, time), rung "sequential" | Sequential | To live in traipse; trip 2.0 on top, off sp; time-spent sketch done | Later (roadmap 11) |
-| GRAPH | directed, weighted edge | Stored | Structural | sfnetworks and dodgr territory | Later |
+| GRAPH | directed, weighted edge | Stored | Structural | Routing stays with dodgr and igraph; the table form is ours, see [networks.md](networks.md) | Later |
 
 DUAL is a verb, not a model: Voronoi from TRI, an adjacency graph from FACE.
 

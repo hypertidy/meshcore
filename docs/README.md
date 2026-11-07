@@ -12,6 +12,7 @@ notes cover the rest.
 | [mesh-spec-v0.2.md](mesh-spec-v0.2.md) | Draft v0.2 changes: the `edge_sources` table (constraint-to-input map) and the overlay labelling annex |
 | [model-zoo.md](model-zoo.md) | Models, verbs and machinery; the vertex identity ladder; the zoo of models and its priorities |
 | [findings.md](findings.md) | What building things found: benchmarks, the keyed join, the MDAL and GDAL multidim bridge, the gaps |
+| [networks.md](networks.md) | Position piece: street networks and routing, what the mesh work gives them, what it lacks, what to do next |
 | [roadmap.md](roadmap.md) | Done, now, next, and open decisions |
 
 ![Vertex identity ladder: each rung finds a different amount of shared structure](figures/ladder.png)
